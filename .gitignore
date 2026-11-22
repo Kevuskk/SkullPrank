@@ -1,0 +1,15 @@
+# build output
+Skull.exe
+*.exe
+
+# archives
+*.zip
+*.rar
+
+# IDE / OS
+.vs/
+bin/
+obj/
+*.user
+Thumbs.db
+.DS_Store
