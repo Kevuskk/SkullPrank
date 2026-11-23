@@ -1199,9 +1199,9 @@ static class Program
 
         FrozenScreen(3000);           if (!Alive()) return;
         Glitch(4500);                 if (!Alive()) return;
-        FakeDeletion(files, 4000);    if (!Alive()) return;
-        SpeakLine();                  if (!Alive()) return;
         FakeRansomware(files, 26000); if (!Alive()) return;
+        SpeakLine();                  if (!Alive()) return;
+        FakeDeletion(files, 4000);    if (!Alive()) return;
         FakeBios(3000);               if (!Alive()) return;
         ShowBlackout(1);              if (!Alive()) return;
 

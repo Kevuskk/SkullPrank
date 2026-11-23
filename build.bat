@@ -24,6 +24,7 @@ rem Add /define:PRANK_LOOP to repeat the finale instead of exiting.
  /r:System.Drawing.dll ^
  /r:System.Windows.Forms.dll ^
  /resource:"%ROOT%assets\skel.gif",skel.gif ^
+ /win32icon:"%ROOT%assets\skull.ico" ^
  /out:"%ROOT%Skull.exe" ^
  "%ROOT%src\Program.cs"
 

@@ -53,7 +53,8 @@ Everything is reversible. Mouse buttons, taskbar and Caps Lock are restored on e
 
 ## Build
 
-The animation is embedded into the executable as a resource, so the output is a single file.
+The animation and the skull icon are embedded into the executable, so the output is a
+single file.
 
 **Windows** (uses the `csc.exe` that ships with .NET Framework):
 
