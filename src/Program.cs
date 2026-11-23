@@ -516,6 +516,41 @@ static class Program
     }
 
     // ===================== FINALE: frozen desktop =========================
+    static Form ShowSkeletonOverlay()
+    {
+        EnsureSkel();
+        if (SkelGif == null) return null;
+
+        try {
+            var fd = new System.Drawing.Imaging.FrameDimension(SkelGif.FrameDimensionsList[0]);
+            SkelGif.SelectActiveFrame(fd, 0);
+        } catch { }
+
+        Rectangle b = Screen.PrimaryScreen.Bounds;
+        int gh = (int)(b.Height * 0.42);
+        if (gh < 80) gh = 80;
+        int gw = (int)(gh * ((double)SkelGif.Width / SkelGif.Height));
+        if (gw < 10) gw = gh;
+
+        var f = new Form {
+            FormBorderStyle = FormBorderStyle.None,
+            StartPosition = FormStartPosition.Manual,
+            Size = new Size(gw, gh),
+            BackColor = Color.Magenta,
+            TransparencyKey = Color.Magenta,
+            TopMost = true,
+            ShowInTaskbar = false
+        };
+        f.Paint += (s, e) => {
+            try { e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic; } catch { }
+            e.Graphics.DrawImage(SkelGif, new Rectangle(0, 0, gw, gh));
+        };
+        f.Location = new Point(b.Left + (b.Width - gw) / 2, b.Top + (int)(b.Height * 0.60) - gh / 2);
+        f.Show();
+        f.Refresh();
+        return f;
+    }
+
     static void FrozenScreen(int ms)
     {
         Bitmap shot = CaptureScreen();
@@ -524,8 +559,21 @@ static class Program
             Bounds = b, TopMost = true, ShowInTaskbar = false, BackgroundImage = shot,
             BackgroundImageLayout = ImageLayout.None };
         f.Show(); f.Refresh();
+
+        Form skel = null;
+        bool tried = false;
         var sw = Stopwatch.StartNew();
-        while (sw.ElapsedMilliseconds < ms && Alive()) { Application.DoEvents(); Thread.Sleep(15); }
+        while (sw.ElapsedMilliseconds < ms && Alive())
+        {
+            if (!tried && sw.ElapsedMilliseconds >= ms - 2000)
+            {
+                tried = true;
+                skel = ShowSkeletonOverlay();
+            }
+            Application.DoEvents();
+            Thread.Sleep(15);
+        }
+        if (skel != null) { try { skel.Close(); skel.Dispose(); } catch { } }
         f.Close(); f.Dispose(); shot.Dispose();
     }
 

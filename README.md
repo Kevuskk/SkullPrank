@@ -36,7 +36,7 @@ writes, no network. When it exits (or the machine restarts), everything is back 
 - Shutdown sting, glitch effect, and a recorded voice-over around the finale
 - Fake BSOD that climbs to 99% and restarts the machine
 - Fake BIOS POST
-- Skeleton GIF that runs across the screen during calm moments
+- Skeleton GIF that stands on the frozen screen just before the crash, and runs across during calm moments
 - One-shot browser open and a `dir /s` terminal gag
 
 Everything is reversible. Mouse buttons, taskbar and Caps Lock are restored on exit.
