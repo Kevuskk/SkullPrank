@@ -26,8 +26,9 @@ ADDITIONAL NOTICE
 
 This software is a prank tool intended for use only on machines owned by the
 operator or on machines where the operator has explicit permission from the
-owner. It displays fake security and ransomware screens and, when built with
-the PRANK_REBOOT symbol, can force a system restart. It does not encrypt,
+owner. It displays fake security and ransomware screens and, by default,
+forces a system restart at the end of its finale; build with the PRANK_SAFE
+symbol to disable the restart. It does not encrypt,
 delete, modify or transmit user data and installs no persistence.
 
 The authors accept no liability for misuse, for lost unsaved work, or for any

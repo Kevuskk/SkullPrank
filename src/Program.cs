@@ -29,12 +29,12 @@ static class Program
 
     const string BrowserUrl = "https://www.microsoft.com/edge";
 
-    // Real restart is opt-in at build time. The repo build leaves it OFF.
-    // Enable with  -define:PRANK_REBOOT  (csc: /define:PRANK_REBOOT)
-#if PRANK_REBOOT
-    static readonly bool AllowRealReboot = true;
-#else
+    // Restart is ON by default. Build with PRANK_SAFE to disable it.
+    //   csc /define:PRANK_SAFE      mcs -define:PRANK_SAFE
+#if PRANK_SAFE
     static readonly bool AllowRealReboot = false;
+#else
+    static readonly bool AllowRealReboot = true;
 #endif
 
     // ===================== state ==========================================
@@ -1217,9 +1217,14 @@ static class Program
             if (Elapsed >= nextFinale)
             {
                 RunFinale();
+#if PRANK_LOOP
                 nextFinale += FinaleEverySec;
                 if (!SilenceWait(SilenceAfterSec)) return;
                 continue;
+#else
+                // The finale is the end of the show; a reboot build never returns here.
+                return;
+#endif
             }
 
             int gap = Rng.Next(GapMin, GapMax + 1);

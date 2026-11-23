@@ -8,7 +8,8 @@ if [ ! -f assets/skel.gif ]; then
   exit 1
 fi
 
-# Add -define:PRANK_REBOOT to let the fake BSOD actually restart the machine.
+# Restart is ON by default. Add -define:PRANK_SAFE to disable it.
+# Add -define:PRANK_LOOP to repeat the finale instead of exiting.
 mcs -sdk:4.5 -target:winexe -optimize+ \
   -r:System.dll \
   -r:System.Core.dll \

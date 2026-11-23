@@ -16,7 +16,8 @@ if not exist "%ROOT%assets\skel.gif" (
 
 echo Building Skull.exe ...
 
-rem Add /define:PRANK_REBOOT to let the fake BSOD actually restart the machine.
+rem Restart is ON by default. Add /define:PRANK_SAFE to disable it.
+rem Add /define:PRANK_LOOP to repeat the finale instead of exiting.
 "%CSC%" /nologo /target:winexe /optimize+ /platform:anycpu ^
  /r:System.dll ^
  /r:System.Core.dll ^

@@ -19,8 +19,8 @@ writes, no network. When it exits (or the machine restarts), everything is back 
 - The finale is loud, full-screen and deliberately scary. Do **not** use it on someone
   with a heart condition, photosensitivity, or severe anxiety — and never on a work
   machine you do not control.
-- The default build has the **real restart disabled**. Build with `PRANK_REBOOT` to let
-  the fake BSOD force a restart; that closes apps and can lose unsaved work.
+- The default build **forces a restart** at the end of the finale. Build with `PRANK_SAFE`
+  to keep it visual-only; note that a restart closes apps and can lose unsaved work.
 - No warranty. You are responsible for what you run and where you run it.
 
 ---
@@ -34,7 +34,7 @@ writes, no network. When it exits (or the machine restarts), everything is back 
 - Random skull flash with a synthesized beep
 - A real `cmd.exe` window showing a fake `del /s` transcript using actual filenames
 - Fake ransomware: description, live encrypted-file counter, 72-hour timer, desktop screenshot as "proof"
-- Fake BSOD that climbs to 99%
+- Fake BSOD that climbs to 99% and restarts the machine
 - Fake BIOS POST
 - Skeleton GIF that runs across the screen during calm moments
 - One-shot browser open and a `dir /s` terminal gag
@@ -69,22 +69,31 @@ build.bat
 
 Both produce `Skull.exe` in the repo root.
 
-### Enabling the real restart
+### Disabling the real restart
 
-The default build ends the fake BSOD at 99% and closes. To make it actually restart the
-machine, build with the `PRANK_REBOOT` symbol:
+The default build ends the fake BSOD at 99% and restarts the machine. To keep the finale
+visual-only, build with the `PRANK_SAFE` symbol:
 
 ```bat
 :: csc
-csc /define:PRANK_REBOOT ...
+csc /define:PRANK_SAFE ...
 ```
 
 ```sh
 # mcs
-mcs -define:PRANK_REBOOT ...
+mcs -define:PRANK_SAFE ...
 ```
 
 Everything else is identical.
+
+### Repeating the finale
+
+By default the finale runs once: the machine restarts (or, with `PRANK_SAFE`, the program
+exits). To make it loop forever instead, build with `PRANK_LOOP`:
+
+```sh
+mcs -define:PRANK_LOOP ...
+```
 
 ---
 
