@@ -26,6 +26,7 @@ rem Add /define:PRANK_LOOP to repeat the finale instead of exiting.
  /resource:"%ROOT%assets\skel.gif",skel.gif ^
  /resource:"%ROOT%assets\sounds\shutdown.wav",shutdown.wav ^
  /resource:"%ROOT%assets\sounds\fakeencrypted.wav",fakeencrypted.wav ^
+ /resource:"%ROOT%assets\sounds\glitch.wav",glitch.wav ^
  /win32icon:"%ROOT%assets\skull.ico" ^
  /out:"%ROOT%Skull.exe" ^
  "%ROOT%src\Program.cs"

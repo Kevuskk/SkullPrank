@@ -34,7 +34,7 @@ writes, no network. When it exits (or the machine restarts), everything is back 
 - Random skull flash with a synthesized beep
 - A real `cmd.exe` window showing a fake `del /s` transcript using actual filenames
 - Fake ransomware: description, live encrypted-file counter, 72-hour timer, desktop screenshot as "proof"
-- Shutdown sting and a recorded voice-over when the ransomware appears
+- Shutdown sting, glitch effect, and a recorded voice-over around the finale
 - Fake BSOD that climbs to 99% and restarts the machine
 - Fake BIOS POST
 - Skeleton GIF that runs across the screen during calm moments

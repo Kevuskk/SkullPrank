@@ -302,6 +302,11 @@ static class Program
         catch { }
     }
 
+    static void StopSound()
+    {
+        try { PlaySound(IntPtr.Zero, IntPtr.Zero, 0); } catch { }
+    }
+
     static void Ding()
     {
         try { System.Media.SystemSounds.Hand.Play(); } catch { }
@@ -590,9 +595,11 @@ static class Program
             }
         };
         f.Show(); f.Refresh();
+        PlaySoundResource("glitch.wav");
         var sw = Stopwatch.StartNew();
         while (sw.ElapsedMilliseconds < ms && Alive())
         { f.Invalidate(); Application.DoEvents(); Thread.Sleep(35); }
+        StopSound();
         f.Close(); f.Dispose(); shot.Dispose();
     }
 
