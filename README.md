@@ -28,7 +28,6 @@ writes, no network. When it exits (or the machine restarts), everything is back 
 ## Features
 
 - Fake "Windows Security — 3 threats found" dialog
-- Two red-skull console windows
 - 4-second blackout
 - 12 rotating fake Microsoft notifications (Edge, Rewards, OneDrive, Update, Xbox, Teams, Bing, M365, Security)
 - Random skull flash with a synthesized beep

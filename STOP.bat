@@ -29,8 +29,6 @@ if /i "%IMG%"=="Skull.exe" (
 
 rem --- close any leftover prank windows ---
 echo [*] Closing leftover prank windows...
-taskkill /F /FI "WINDOWTITLE eq SYSTEM BREACH // 01*" >nul 2>&1
-taskkill /F /FI "WINDOWTITLE eq SYSTEM BREACH // 02*" >nul 2>&1
 rem NOTE: only matches an elevated cmd titled exactly like the fake-wipe window.
 taskkill /F /FI "WINDOWTITLE eq Administrator: C:\Windows\system32\cmd.exe" >nul 2>&1
 
@@ -45,9 +43,6 @@ del /q "%REST%" >nul 2>&1
 
 rem --- clean temp artifacts ---
 echo [*] Cleaning temp files...
-del /q "%TEMP%\skull_ascii.txt" >nul 2>&1
-del /q "%TEMP%\skull_1.bat" >nul 2>&1
-del /q "%TEMP%\skull_2.bat" >nul 2>&1
 del /q "%TEMP%\skull_wipe.bat" >nul 2>&1
 del /q "%TEMP%\skull_wipe_*.txt" >nul 2>&1
 del /q "%TEMP%\skull_prank.pid" >nul 2>&1

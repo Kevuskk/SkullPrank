@@ -41,9 +41,6 @@ static class Program
     static readonly string TempDir  = Path.GetTempPath();
     static readonly string StopFile = Path.Combine(TempDir, "skull_prank.stop");
     static readonly string PidFile  = Path.Combine(TempDir, "skull_prank.pid");
-    static readonly string SkullTxt = Path.Combine(TempDir, "skull_ascii.txt");
-    static readonly string Bat1Path = Path.Combine(TempDir, "skull_1.bat");
-    static readonly string Bat2Path = Path.Combine(TempDir, "skull_2.bat");
     static readonly Random Rng      = new Random();
 
     static DateTime StartTime;
@@ -83,6 +80,29 @@ static class Program
         new Notif("Windows Security", "Review your privacy settings and improve your protection.", Color.FromArgb(0,103,192), "S", "Review")
     };
 
+    // ===================== locked overlay form ============================
+    sealed class LockedForm : Form
+    {
+        public bool AllowClose;
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (!AllowClose) e.Cancel = true;
+            base.OnFormClosing(e);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_SYSCOMMAND = 0x0112, SC_CLOSE = 0xF060, SC_MINIMIZE = 0xF020;
+            if (m.Msg == WM_SYSCOMMAND)
+            {
+                int cmd = m.WParam.ToInt32() & 0xFFF0;
+                if (cmd == SC_CLOSE || cmd == SC_MINIMIZE) return;
+            }
+            base.WndProc(ref m);
+        }
+    }
+
     // ===================== win32 ==========================================
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     static extern IntPtr FindWindow(string cls, string title);
@@ -115,9 +135,6 @@ static class Program
 
             ShowFakeSecurity(4000);
 
-            StartSkullConsoles();
-            if (!WaitSafe(5)) return;
-
             ShowBlackout(BlackoutSeconds);
             if (!WaitSafe(QuietSeconds)) return;
 
@@ -131,9 +148,6 @@ static class Program
             try { foreach (var kv in SoundHandles) { try { if (kv.Value.IsAllocated) kv.Value.Free(); } catch { } } } catch { }
             try { if (File.Exists(StopFile)) File.Delete(StopFile); } catch { }
             try { if (File.Exists(PidFile))  File.Delete(PidFile);  } catch { }
-            try { if (File.Exists(SkullTxt)) File.Delete(SkullTxt); } catch { }
-            try { if (File.Exists(Bat1Path)) File.Delete(Bat1Path); } catch { }
-            try { if (File.Exists(Bat2Path)) File.Delete(Bat2Path); } catch { }
             try { foreach (string f2 in Directory.GetFiles(TempDir, "skull_wipe_*")) File.Delete(f2); } catch { }
         }
     }
@@ -474,15 +488,7 @@ static class Program
         f.Dispose();
     }
 
-    // ===================== skull consoles =================================
-    static void LaunchBat(string path)
-    {
-        try {
-            Process.Start(new ProcessStartInfo { FileName = "cmd.exe", Arguments = "/c \"" + path + "\"",
-                UseShellExecute = true, WindowStyle = ProcessWindowStyle.Normal });
-        } catch { }
-    }
-
+    // ===================== window helpers =================================
     static void MoveWindowByTitle(string title, int x, int y, int w, int h)
     {
         for (int i = 0; i < 30; i++)
@@ -491,38 +497,6 @@ static class Program
             if (hwnd != IntPtr.Zero) { MoveWindow(hwnd, x, y, w, h, true); return; }
             Thread.Sleep(120);
         }
-    }
-
-    static void StartSkullConsoles()
-    {
-        string ascii =
-@"       .------------.
-     .'              '.
-    /  .-.        .-.  \
-   |  (   )      (   )  |
-   |   `-'        `-'   |
-    \         /\        /
-     '.      /  \     .'
-       '-._ /    \ _.-'
-           |      |
-          /|      |\
-         / |      | \
-        /__|______|__\
-";
-        ascii = ascii.Replace("\r\n", "\n").Replace("\n", "\r\n");
-        File.WriteAllText(SkullTxt, ascii, Encoding.ASCII);
-
-        string body = "@echo off\r\nmode con cols=46 lines=20 >nul\r\ncolor 0C\r\ntitle {0}\r\ntype \"{1}\"\r\ntimeout /t 6 /nobreak >nul\r\n";
-        File.WriteAllText(Bat1Path, string.Format(body, "SYSTEM BREACH // 01", SkullTxt), Encoding.ASCII);
-        File.WriteAllText(Bat2Path, string.Format(body, "SYSTEM BREACH // 02", SkullTxt), Encoding.ASCII);
-
-        LaunchBat(Bat1Path);
-        LaunchBat(Bat2Path);
-
-        Thread.Sleep(500);
-        Rectangle vs = SystemInformation.VirtualScreen;
-        MoveWindowByTitle("SYSTEM BREACH // 01", vs.Left + 60,  vs.Top + 60, 430, 380);
-        MoveWindowByTitle("SYSTEM BREACH // 02", vs.Left + 520, vs.Top + 60, 430, 380);
     }
 
     // ===================== simple overlays ================================
@@ -763,7 +737,7 @@ static class Program
         int w = b.Width, h = b.Height;
         Bitmap proof = CaptureScreen();
 
-        var f = new Form { FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual,
+        var f = new LockedForm { FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual,
             Bounds = b, BackColor = Color.Black, TopMost = true, ShowInTaskbar = false };
 
         f.Controls.Add(new Label {
@@ -883,6 +857,7 @@ static class Program
             Application.DoEvents();
             Thread.Sleep(25);
         }
+        f.AllowClose = true;
         f.Close(); f.Dispose(); proof.Dispose();
     }
 
@@ -910,7 +885,7 @@ static class Program
     static void FakeBsod(int ms, bool reboot)
     {
         Rectangle b = Screen.PrimaryScreen.Bounds;
-        var f = new Form { FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual,
+        var f = new LockedForm { FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual,
             Bounds = b, BackColor = Color.FromArgb(0, 120, 215), TopMost = true, ShowInTaskbar = false };
         int percent = 0;
         float sc = b.Height / 1080f;
@@ -957,6 +932,7 @@ static class Program
             }
         }
 
+        f.AllowClose = true;
         f.Close(); f.Dispose();
     }
 
@@ -1008,9 +984,6 @@ static class Program
     {
         try { if (File.Exists(StopFile)) File.Delete(StopFile); } catch { }
         try { if (File.Exists(PidFile))  File.Delete(PidFile);  } catch { }
-        try { if (File.Exists(SkullTxt)) File.Delete(SkullTxt); } catch { }
-        try { if (File.Exists(Bat1Path)) File.Delete(Bat1Path); } catch { }
-        try { if (File.Exists(Bat2Path)) File.Delete(Bat2Path); } catch { }
         try { foreach (string f2 in Directory.GetFiles(TempDir, "skull_wipe_*")) File.Delete(f2); } catch { }
     }
 
