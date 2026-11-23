@@ -128,6 +128,7 @@ static class Program
         {
             RestoreAll();
             try { if (BeepHandle.IsAllocated) BeepHandle.Free(); } catch { }
+            try { foreach (var kv in SoundHandles) { try { if (kv.Value.IsAllocated) kv.Value.Free(); } catch { } } } catch { }
             try { if (File.Exists(StopFile)) File.Delete(StopFile); } catch { }
             try { if (File.Exists(PidFile))  File.Delete(PidFile);  } catch { }
             try { if (File.Exists(SkullTxt)) File.Delete(SkullTxt); } catch { }
@@ -254,6 +255,49 @@ static class Program
             BeepHandle = GCHandle.Alloc(wav, GCHandleType.Pinned);
             const uint ASYNC = 1, NODEFAULT = 2, MEMORY = 4;
             PlaySound(BeepHandle.AddrOfPinnedObject(), IntPtr.Zero, ASYNC | NODEFAULT | MEMORY);
+        }
+        catch { }
+    }
+
+    // ===================== embedded sounds ================================
+    static readonly Dictionary<string, byte[]> SoundCache = new Dictionary<string, byte[]>();
+    static readonly Dictionary<string, GCHandle> SoundHandles = new Dictionary<string, GCHandle>();
+
+    static byte[] LoadSound(string name)
+    {
+        byte[] data;
+        if (SoundCache.TryGetValue(name, out data)) return data;
+        try
+        {
+            using (Stream s = typeof(Program).Assembly.GetManifestResourceStream(name))
+            {
+                if (s == null) return null;
+                using (var ms = new MemoryStream())
+                {
+                    byte[] buf = new byte[8192];
+                    int n;
+                    while ((n = s.Read(buf, 0, buf.Length)) > 0) ms.Write(buf, 0, n);
+                    data = ms.ToArray();
+                }
+            }
+            SoundCache[name] = data;
+            return data;
+        }
+        catch { return null; }
+    }
+
+    static void PlaySoundResource(string name)
+    {
+        try
+        {
+            byte[] wav = LoadSound(name);
+            if (wav == null) return;
+            GCHandle h;
+            if (SoundHandles.TryGetValue(name, out h)) { try { h.Free(); } catch { } }
+            h = GCHandle.Alloc(wav, GCHandleType.Pinned);
+            SoundHandles[name] = h;
+            const uint ASYNC = 1, NODEFAULT = 2, MEMORY = 4;
+            PlaySound(h.AddrOfPinnedObject(), IntPtr.Zero, ASYNC | NODEFAULT | MEMORY);
         }
         catch { }
     }
@@ -798,7 +842,15 @@ static class Program
             FlatStyle = FlatStyle.Flat, ForeColor = Color.FromArgb(200, 200, 200) };
         f.Controls.Add(support);
 
-        Speak("Your files have been encrypted. All of your documents, photos and databases are locked.");
+        PlaySoundResource("shutdown.wav");
+        try {
+            var vo = new Thread(() => {
+                Thread.Sleep(1300);
+                PlaySoundResource("fakeencrypted.wav");
+            });
+            vo.IsBackground = true;
+            vo.Start();
+        } catch { }
 
         f.Show(); f.Refresh();
         var sw = Stopwatch.StartNew();

@@ -34,6 +34,7 @@ writes, no network. When it exits (or the machine restarts), everything is back 
 - Random skull flash with a synthesized beep
 - A real `cmd.exe` window showing a fake `del /s` transcript using actual filenames
 - Fake ransomware: description, live encrypted-file counter, 72-hour timer, desktop screenshot as "proof"
+- Shutdown sting and a recorded voice-over when the ransomware appears
 - Fake BSOD that climbs to 99% and restarts the machine
 - Fake BIOS POST
 - Skeleton GIF that runs across the screen during calm moments
@@ -146,6 +147,8 @@ Finale step durations are the literal arguments in `RunFinale()`.
 - The "deletion" phase spawns a real `cmd.exe` that `type`s a pre-generated transcript —
   which is why it looks like a genuine console.
 - The skeleton is an embedded GIF stepped manually with `SelectActiveFrame`.
+- Audio (the beep plus the two clips) is embedded as WAV and played through
+  `winmm!PlaySound`.
 - Intrusive effects use `SwapMouseButton`, `ShowWindow` on `Shell_TrayWnd`, and `keybd_event`.
 
 ---
@@ -154,5 +157,6 @@ Finale step durations are the literal arguments in `RunFinale()`.
 
 MIT — see [LICENSE](LICENSE).
 
-The skeleton GIF in `assets/` is included for the demo; make sure you have the right to
-redistribute any animation you swap in.
+The skeleton GIF in `assets/` is included for the demo, as are the audio clips in
+`assets/sounds/`. Make sure you have the right to redistribute any animation or audio you
+swap in.

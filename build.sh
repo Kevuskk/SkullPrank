@@ -16,6 +16,8 @@ mcs -sdk:4.5 -target:winexe -optimize+ \
   -r:System.Drawing.dll \
   -r:System.Windows.Forms.dll \
   -resource:assets/skel.gif,skel.gif \
+  -resource:assets/sounds/shutdown.wav,shutdown.wav \
+  -resource:assets/sounds/fakeencrypted.wav,fakeencrypted.wav \
   -win32icon:assets/skull.ico \
   -out:Skull.exe \
   src/Program.cs
